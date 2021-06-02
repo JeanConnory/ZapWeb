@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ZapWeb.Database;
+using ZapWeb.Hubs;
 
 namespace ZapWeb
 {
@@ -35,9 +36,10 @@ namespace ZapWeb
 
             services.AddDbContext<BancoContext>(cfg =>
             {
-                cfg.UseSqlite("Data Source=Database\\ZapWeb.db");
+                cfg.UseSqlite(@"Data Source=C:\Projetos\Estudos\SignalR\ZapWeb\ZapWeb\Database\ZapWeb.db");
             });
 
+            services.AddSignalR();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
@@ -64,6 +66,11 @@ namespace ZapWeb
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
+            });
+
+            app.UseSignalR(cfg =>
+            {
+                cfg.MapHub<ZapWebHub>("/ZapWebHub");
             });
         }
     }

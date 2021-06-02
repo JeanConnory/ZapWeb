@@ -32,3 +32,4 @@ C:\Projetos\Estudos\SignalR\ZapWeb\ZapWeb\obj\Debug\netcoreapp2.2\ZapWeb.genrunt
 C:\Projetos\Estudos\SignalR\ZapWeb\ZapWeb\obj\Debug\netcoreapp2.2\ZapWeb.csproj.CopyComplete
 C:\Projetos\Estudos\SignalR\ZapWeb\ZapWeb\obj\Debug\netcoreapp2.2\Razor\Views\Home\Login.cshtml.g.cs
 C:\Projetos\Estudos\SignalR\ZapWeb\ZapWeb\obj\Debug\netcoreapp2.2\Razor\Views\Home\Cadastro.cshtml.g.cs
+C:\Projetos\Estudos\SignalR\ZapWeb\ZapWeb\obj\Debug\netcoreapp2.2\Razor\Views\Home\Conversacao.cshtml.g.cs
