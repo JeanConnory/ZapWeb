@@ -21,7 +21,7 @@ namespace ZapWeb.Hubs
         {
             bool IsExistUser = _banco.Usuarios.Where(a => a.Email == usuario.Email).Count() > 0;
 
-            if(IsExistUser)
+            if (IsExistUser)
             {
                 await Clients.Caller.SendAsync("ReceberCadastro", false, null, "E-mail já cadastrado!");
             }
@@ -31,6 +31,20 @@ namespace ZapWeb.Hubs
                 _banco.SaveChanges();
 
                 await Clients.Caller.SendAsync("ReceberCadastro", true, usuario, "Usuário cadastrado com sucesso!");
+            }
+        }
+
+        public async Task Login(Usuario usuario)
+        {
+            var usuarioDb = _banco.Usuarios.FirstOrDefault(a => a.Email == usuario.Email && a.Senha == usuario.Senha);
+
+            if (usuarioDb == null)
+            {
+                await Clients.Caller.SendAsync("ReceberLogin", false, null, "E-mail ou Senha não encontrados!");
+            }
+            else
+            {
+                await Clients.Caller.SendAsync("ReceberLogin", true, usuarioDb, null);
             }
         }
     }

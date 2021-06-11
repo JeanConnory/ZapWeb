@@ -4,6 +4,7 @@ var connection = new signalR.HubConnectionBuilder().withUrl("/ZapWebHub").build(
 
 function ConnectionStart() {
     connection.start().then(function () {
+        HabilitarLogin();
         HabilitarCadastro();
         console.info("Connected!");
     }).catch(function () {
@@ -40,6 +41,60 @@ function HabilitarCadastro() {
         }
         mensagem.innerText = msg;
     });
+}
+
+function HabilitarLogin() {
+    var formLogin = document.getElementById("form-login");
+    if (formLogin != null) {
+        if (GetUsuarioLogado() != null) {
+            window.location.href = "/Home/Conversacao";
+        }
+
+        var btnAcessar = document.getElementById("btnAcessar");
+        btnAcessar.addEventListener("click", function () {
+            var email = document.getElementById("email").value;
+            var senha = document.getElementById("senha").value;
+
+            var usuario = { Email: email, Senha: senha };
+
+            connection.invoke("Login", usuario);
+        });
+    }
+
+    connection.on("ReceberLogin", function (sucesso, usuario, msg) {
+        if (sucesso) {
+            SetUsuarioLogado(usuario);
+            window.location.href = "/Home/Conversacao"
+        } else {
+            var mensagem = document.getElementById("mensagem");
+            mensagem.innerText = msg;
+        }
+    });
+}
+
+var telaConversacao = document.getElementById("tela-conversacao");
+if (telaConversacao != null) {
+    if (GetUsuarioLogado() == null) {
+        window.location.href = "/Home/Login";
+    }
+
+    var btnSair = document.getElementById("btnSair");
+    btnSair.addEventListener("click", function () {
+        DeletarUsuarioLogado();
+        window.location.href = "/Home/Login";
+    });
+}
+
+function GetUsuarioLogado() {
+    return JSON.parse(sessionStorage.getItem("Logado"));
+}
+
+function SetUsuarioLogado(usuario) {
+    sessionStorage.setItem("Logado", JSON.stringify(usuario));
+}
+
+function DeletarUsuarioLogado() {
+    sessionStorage.removeItem("Logado");
 }
 
 ConnectionStart();
