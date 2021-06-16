@@ -39,7 +39,9 @@ namespace ZapWeb
                 cfg.UseSqlite(@"Data Source=C:\Projetos\Estudos\SignalR\ZapWeb\ZapWeb\Database\ZapWeb.db");
             });
 
-            services.AddSignalR();
+            services.AddSignalR(cfg =>
+                cfg.EnableDetailedErrors = true
+            );
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 

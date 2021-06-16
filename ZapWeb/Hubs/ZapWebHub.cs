@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,6 +46,54 @@ namespace ZapWeb.Hubs
             else
             {
                 await Clients.Caller.SendAsync("ReceberLogin", true, usuarioDb, null);
+            }
+        }
+
+        public async Task AddConnectionIdDoUsuario(Usuario usuario)
+        {
+            Usuario usuarioDB = await _banco.Usuarios.FindAsync(usuario.Id);
+            List<string> connectionsId = null;
+
+            var connectionIdCurrent = Context.ConnectionId;
+
+            if (usuarioDB.ConnectionId == null)
+            {
+                connectionsId = new List<string>();
+                connectionsId.Add(connectionIdCurrent);
+            }
+            else
+            { 
+                connectionsId = JsonConvert.DeserializeObject<List<string>>(usuarioDB.ConnectionId);
+
+                if(!connectionsId.Contains(connectionIdCurrent))
+                {
+                    connectionsId.Add(connectionIdCurrent);
+                }
+            }
+
+            usuarioDB.ConnectionId = JsonConvert.SerializeObject(connectionsId);
+            _banco.Usuarios.Update(usuarioDB);
+            _banco.SaveChanges();
+        }
+
+        public async Task DelConnectionIdDoUsuario(Usuario usuario)
+        {
+            Usuario usuarioDB = await _banco.Usuarios.FindAsync(usuario.Id);
+
+            if (usuarioDB.ConnectionId.Length > 0)
+            {
+                var connectionIdCurrent = Context.ConnectionId;
+
+                List<string> connectionsId = JsonConvert.DeserializeObject<List<string>>(usuarioDB.ConnectionId);
+
+                if (connectionsId.Contains(connectionIdCurrent))
+                {
+                    connectionsId.Remove(connectionIdCurrent);
+                }
+
+                usuarioDB.ConnectionId = JsonConvert.SerializeObject(connectionsId);
+                _banco.Usuarios.Update(usuarioDB);
+                _banco.SaveChanges();
             }
         }
     }
