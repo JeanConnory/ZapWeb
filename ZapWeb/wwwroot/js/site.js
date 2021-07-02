@@ -76,18 +76,49 @@ function HabilitarLogin() {
 var telaConversacao = document.getElementById("tela-conversacao");
 if (telaConversacao != null) {
     if (GetUsuarioLogado() == null) {
-        window.location.href = "/Home/Login";    
+        window.location.href = "/Home/Login";
     }
 }
 
 function HabilitarConversacao() {
+    MonitorarConnectionID();
+    MonitorarListaUsuarios();
+}
+
+function MonitorarListaUsuarios() {
+    connection.invoke("ObterListaUsuarios");
+
+    connection.on("ReceberListaUsuarios", function (usuarios) {
+        var html = "";
+        for (var i = 0; i < usuarios.length; i++) {
+            if (usuarios[i].id != GetUsuarioLogado().id) {
+                html += '<div class="container-user-item"><img src = "/imagem/logo.png" style = "width: 20%;" /><div><span>' + usuarios[i].nome.split(" ")[0] + ' (' + (usuarios[i].isOnline ? "online" : "offline") + ')</span><br /><span class="email">' + usuarios[i].email + '</span></div></div >';
+            }
+        }
+        document.getElementById("users").innerHTML = html;
+
+        var container = document.getElementById("users").querySelectorAll(".container-user-item");
+        for (var i = 0; i < container.length; i++) {
+            container[i].addEventListener("click", function (event) {
+                var component = event.target || event.srcElement;
+
+                var emailUserUm = GetUsuarioLogado().email;
+                var emailUserDois = (component.parentElement.querySelector(".email").innerText);
+
+                connection.invoke("CriarOuAbrirGrupo", emailUserUm, emailUserDois);
+            });
+        }
+    });
+}
+
+function MonitorarConnectionID() {
     var telaConversacao = document.getElementById("tela-conversacao");
     if (telaConversacao != null) {
         connection.invoke("AddConnectionIdDoUsuario", GetUsuarioLogado());
 
         var btnSair = document.getElementById("btnSair");
         btnSair.addEventListener("click", function () {
-            connection.invoke("DelConnectionIdDoUsuario", GetUsuarioLogado()).then(function () {
+            connection.invoke("Logout", GetUsuarioLogado()).then(function () {
                 DeletarUsuarioLogado();
                 window.location.href = "/Home/Login";
             });
