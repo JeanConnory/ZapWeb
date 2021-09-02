@@ -1,6 +1,7 @@
 ﻿/* Cliente de Conexão e Reconexão com SignalR - Hub */
 
 var connection = new signalR.HubConnectionBuilder().withUrl("/ZapWebHub").build();
+var nomeGrupo = "";
 
 function ConnectionStart() {
     connection.start().then(function () {
@@ -83,6 +84,22 @@ if (telaConversacao != null) {
 function HabilitarConversacao() {
     MonitorarConnectionID();
     MonitorarListaUsuarios();
+    EnviarReceberMensagem();
+    AbrirGrupo();
+}
+
+function AbrirGrupo() {
+    connection.on("AbrirGrupo", function (nomeGrupo) {
+        nomeGrupo = nomeGrupo;
+    });
+}
+
+function EnviarReceberMensagem() {
+    var btnEnviar = document.getElementById("btnEnviar");
+    btnEnviar.addEventListener("click", function () {
+        var mensagem = document.getElementById("mensagem");
+        connection.invoke("EnviarMensagem", mensagem, nomeGrupo);
+    });
 }
 
 function MonitorarListaUsuarios() {

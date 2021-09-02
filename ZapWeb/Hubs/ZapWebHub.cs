@@ -177,6 +177,8 @@ namespace ZapWeb.Hubs
                     await Groups.AddToGroupAsync(connectionId, nomeGrupo);
                 }
             }
+
+            await Clients.Caller.SendAsync("AbrirGrupo", nomeGrupo);
         }
 
         private string CriarNomeGrupo(string emailUserUm, string emailUserDois)
