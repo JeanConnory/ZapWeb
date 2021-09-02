@@ -90,6 +90,17 @@ namespace ZapWeb.Hubs
             usuarioDB.ConnectionId = JsonConvert.SerializeObject(connectionsId);
             _banco.Usuarios.Update(usuarioDB);
             _banco.SaveChanges();
+
+            //Adicionar as ConnectionsId dos grupos de conversa desse usuário no SignalR
+            var grupos = _banco.Grupos.Where(a => a.Usuarios.Contains(usuarioDB.Email));
+
+            foreach (var connectionId in connectionsId)
+            {
+                foreach (var grupo in grupos)
+                {
+                    await Groups.AddToGroupAsync(connectionId, grupo.Nome);
+                }
+            }
         }
 
         public async Task DelConnectionIdDoUsuario(Usuario usuario)
@@ -110,6 +121,18 @@ namespace ZapWeb.Hubs
                 usuarioDB.ConnectionId = JsonConvert.SerializeObject(connectionsId);
                 _banco.Usuarios.Update(usuarioDB);
                 _banco.SaveChanges();
+
+
+                //Remoção das ConnectionsId dos grupos de conversa desse usuário no SignalR
+                var grupos = _banco.Grupos.Where(a => a.Usuarios.Contains(usuarioDB.Email));
+
+                foreach (var connectionId in connectionsId)
+                {
+                    foreach (var grupo in grupos)
+                    {
+                        await Groups.RemoveFromGroupAsync(connectionId, grupo.Nome);
+                    }
+                }
             }
         }
 
@@ -126,19 +149,33 @@ namespace ZapWeb.Hubs
 
             if (grupo == null)
             {
-                Usuario usuarioUm = _banco.Usuarios.First(a => a.Email == emailUserUm);
-                Usuario usuarioDois = _banco.Usuarios.First(a => a.Email == emailUserDois);
-
                 grupo = new Grupo();
                 grupo.Nome = nomeGrupo;
-                grupo.Usuarios = JsonConvert.SerializeObject(new List<Usuario>()
+                grupo.Usuarios = JsonConvert.SerializeObject(new List<string>()
                 {
-                    usuarioUm,
-                    usuarioDois
+                    emailUserUm,
+                    emailUserDois
                 });
 
                 _banco.Grupos.Add(grupo);
                 await _banco.SaveChangesAsync();
+            }
+
+            //Adicionou as ConnectionsId dos grupos de conversa desse usuário no SignalR
+            List<string> emails = JsonConvert.DeserializeObject<List<string>>(grupo.Usuarios);
+            List<Usuario> usuarios = new List<Usuario>()
+            {
+                _banco.Usuarios.First(a => a.Email == emails[0]),
+                _banco.Usuarios.First(a => a.Email == emails[1])
+            };
+
+            foreach (var usuario in usuarios)
+            {
+                var connectionsId = JsonConvert.DeserializeObject<List<string>>(usuario.ConnectionId);
+                foreach (var connectionId in connectionsId)
+                {
+                    await Groups.AddToGroupAsync(connectionId, nomeGrupo);
+                }
             }
         }
 
