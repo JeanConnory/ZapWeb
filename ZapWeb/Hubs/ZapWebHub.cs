@@ -181,6 +181,29 @@ namespace ZapWeb.Hubs
             await Clients.Caller.SendAsync("AbrirGrupo", nomeGrupo);
         }
 
+        public async Task EnviarMensagem(Usuario usuario, string msg, string nomeGrupo)
+        {
+            Grupo grupo = _banco.Grupos.FirstOrDefault(a => a.Nome == nomeGrupo);
+
+            if(!grupo.Usuarios.Contains(usuario.Email))
+            {
+                throw new Exception("Usuário não pertence ao grupo!");
+            }
+
+            Mensagem mensagem = new Mensagem();
+            mensagem.NomeGrupo = nomeGrupo;
+            mensagem.Texto = msg;
+            mensagem.DataCriacao = DateTime.Now;
+            mensagem.UsuarioId = usuario.Id;
+            mensagem.UsuarioJson = JsonConvert.SerializeObject(usuario);
+            mensagem.Usuario = usuario;
+
+            _banco.Mensagens.Add(mensagem);
+            _banco.SaveChanges();
+
+            await Clients.Group(nomeGrupo).SendAsync("ReceberMensagem", mensagem, nomeGrupo);
+        }
+
         private string CriarNomeGrupo(string emailUserUm, string emailUserDois)
         {
             List<string> lista = new List<string>() { emailUserUm, emailUserDois };

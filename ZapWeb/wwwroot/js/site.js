@@ -10,8 +10,10 @@ function ConnectionStart() {
         HabilitarConversacao();
         console.info("Connected!");
     }).catch(function () {
-        console.error(err.toSatring());
-        setTimeout(ConnectionStart(), 5000);
+        if (connection.state == 0) {
+            console.error(err.toSatring());
+            setTimeout(ConnectionStart, 5000);
+        }
     });
 }
 
@@ -82,23 +84,39 @@ if (telaConversacao != null) {
 }
 
 function HabilitarConversacao() {
-    MonitorarConnectionID();
-    MonitorarListaUsuarios();
-    EnviarReceberMensagem();
-    AbrirGrupo();
+    var telaConversacao = document.getElementById("tela-conversacao");
+    if (telaConversacao != null) {
+        MonitorarConnectionID();
+        MonitorarListaUsuarios();
+        EnviarReceberMensagem();
+        AbrirGrupo();
+    }
 }
 
 function AbrirGrupo() {
-    connection.on("AbrirGrupo", function (nomeGrupo) {
-        nomeGrupo = nomeGrupo;
+    connection.on("AbrirGrupo", function (nomeDoGrupo) {
+        nomeGrupo = nomeDoGrupo;
+        console.info(nomeGrupo);
+        var container = document.querySelector(".container-messages");
+        container.innerHTML = "";
     });
 }
 
 function EnviarReceberMensagem() {
     var btnEnviar = document.getElementById("btnEnviar");
     btnEnviar.addEventListener("click", function () {
-        var mensagem = document.getElementById("mensagem");
-        connection.invoke("EnviarMensagem", mensagem, nomeGrupo);
+        var mensagem = document.getElementById("mensagem").value;
+        var usuario = GetUsuarioLogado();
+        connection.invoke("EnviarMensagem", usuario, mensagem, nomeGrupo);
+    });
+
+    connection.on("ReceberMensagem", function (mensagem, nomeDoGrupo) {
+        var container = document.querySelector(".container-messages");
+
+        if (nomeGrupo == nomeDoGrupo) {
+            var mensagemHTML = '<div class="message message-' + (mensagem.usuario.id == GetUsuarioLogado().id ? "right" : "left") + '"><div class="message-head"><img src="/imagem/chat.png" />' + mensagem.usuario.nome + '</div><div class="message-message">' + mensagem.texto + '</div></div>'
+            container.innerHTML += mensagemHTML;
+        }
     });
 }
 
