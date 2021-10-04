@@ -90,15 +90,33 @@ function HabilitarConversacao() {
         MonitorarListaUsuarios();
         EnviarReceberMensagem();
         AbrirGrupo();
+        OfflineDetect();
     }
 }
 
+function OfflineDetect() {
+    window.addEventListener("beforeunload", function (event) {
+        connection.invoke("DelConnectionIdDoUsuario", GetUsuarioLogado());
+        event.returnValue = "Tem certeza que deseja sair?";
+
+    });
+}
+
 function AbrirGrupo() {
-    connection.on("AbrirGrupo", function (nomeDoGrupo) {
+    connection.on("AbrirGrupo", function (nomeDoGrupo, mensagens) {
         nomeGrupo = nomeDoGrupo;
         console.info(nomeGrupo);
         var container = document.querySelector(".container-messages");
         container.innerHTML = "";
+
+        var mensagemHTML = "";
+
+        for (i = 0; i < mensagens.length; i++) {
+            mensagemHTML += '<div class="message message-' + (mensagens[i].usuario.id == GetUsuarioLogado().id ? "right" : "left") + '"><div class="message-head"><img src="/imagem/chat.png" /> ' + mensagens[i].usuario.nome + '</div><div class="message-message">' + mensagens[i].texto + '</div></div>'
+        }         
+        container.innerHTML += mensagemHTML;
+
+        document.querySelector(".container-button").style.display = "flex";
     });
 }
 
@@ -114,7 +132,7 @@ function EnviarReceberMensagem() {
         var container = document.querySelector(".container-messages");
 
         if (nomeGrupo == nomeDoGrupo) {
-            var mensagemHTML = '<div class="message message-' + (mensagem.usuario.id == GetUsuarioLogado().id ? "right" : "left") + '"><div class="message-head"><img src="/imagem/chat.png" />' + mensagem.usuario.nome + '</div><div class="message-message">' + mensagem.texto + '</div></div>'
+            var mensagemHTML = '<div class="message message-' + (mensagem.usuario.id == GetUsuarioLogado().id ? "right" : "left") + '"><div class="message-head"><img src="/imagem/chat.png" /> ' + mensagem.usuario.nome + '</div><div class="message-message">' + mensagem.texto + '</div></div>'
             container.innerHTML += mensagemHTML;
         }
     });

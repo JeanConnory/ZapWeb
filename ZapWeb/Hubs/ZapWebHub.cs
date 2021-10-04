@@ -50,7 +50,7 @@ namespace ZapWeb.Hubs
                 usuarioDb.IsOnline = true;
                 _banco.Usuarios.Update(usuarioDb);
                 _banco.SaveChanges();
-                await Clients.All.SendAsync("ReceberListaUsuarios", _banco.Usuarios.ToList());
+                await NotificarMudançaNaListaUsuarios();
             }
         }
 
@@ -62,7 +62,7 @@ namespace ZapWeb.Hubs
             _banco.Usuarios.Update(usuarioDb);
             _banco.SaveChanges();
             await DelConnectionIdDoUsuario(usuarioDb);
-            await Clients.All.SendAsync("ReceberListaUsuarios", _banco.Usuarios.ToList());
+            await NotificarMudançaNaListaUsuarios();
         }
 
         public async Task AddConnectionIdDoUsuario(Usuario usuario)
@@ -87,9 +87,11 @@ namespace ZapWeb.Hubs
                 }
             }
 
+            usuarioDB.IsOnline = true;
             usuarioDB.ConnectionId = JsonConvert.SerializeObject(connectionsId);
             _banco.Usuarios.Update(usuarioDB);
             _banco.SaveChanges();
+            await NotificarMudançaNaListaUsuarios();
 
             //Adicionar as ConnectionsId dos grupos de conversa desse usuário no SignalR
             var grupos = _banco.Grupos.Where(a => a.Usuarios.Contains(usuarioDB.Email));
@@ -105,35 +107,51 @@ namespace ZapWeb.Hubs
 
         public async Task DelConnectionIdDoUsuario(Usuario usuario)
         {
-            Usuario usuarioDB = await _banco.Usuarios.FindAsync(usuario.Id);
-
-            if (usuarioDB.ConnectionId.Length > 0)
+            if (usuario != null)
             {
-                var connectionIdCurrent = Context.ConnectionId;
+                Usuario usuarioDB = await _banco.Usuarios.FindAsync(usuario.Id);
+                List<string> connectionsId = null;
 
-                List<string> connectionsId = JsonConvert.DeserializeObject<List<string>>(usuarioDB.ConnectionId);
-
-                if (connectionsId.Contains(connectionIdCurrent))
+                if (usuarioDB.ConnectionId.Length > 0)
                 {
-                    connectionsId.Remove(connectionIdCurrent);
-                }
+                    var connectionIdCurrent = Context.ConnectionId;
 
-                usuarioDB.ConnectionId = JsonConvert.SerializeObject(connectionsId);
-                _banco.Usuarios.Update(usuarioDB);
-                _banco.SaveChanges();
+                    connectionsId = JsonConvert.DeserializeObject<List<string>>(usuarioDB.ConnectionId);
 
-
-                //Remoção das ConnectionsId dos grupos de conversa desse usuário no SignalR
-                var grupos = _banco.Grupos.Where(a => a.Usuarios.Contains(usuarioDB.Email));
-
-                foreach (var connectionId in connectionsId)
-                {
-                    foreach (var grupo in grupos)
+                    if (connectionsId.Contains(connectionIdCurrent))
                     {
-                        await Groups.RemoveFromGroupAsync(connectionId, grupo.Nome);
+                        connectionsId.Remove(connectionIdCurrent);
+                    }
+
+                    usuarioDB.ConnectionId = JsonConvert.SerializeObject(connectionsId);
+
+                    if (connectionsId.Count <= 0)
+                    {
+                        usuarioDB.IsOnline = false;
+                    }
+
+                    _banco.Usuarios.Update(usuarioDB);
+                    _banco.SaveChanges();
+                    await NotificarMudançaNaListaUsuarios();
+
+                    //Remoção das ConnectionsId dos grupos de conversa desse usuário no SignalR
+                    var grupos = _banco.Grupos.Where(a => a.Usuarios.Contains(usuarioDB.Email));
+
+                    foreach (var connectionId in connectionsId)
+                    {
+                        foreach (var grupo in grupos)
+                        {
+                            await Groups.RemoveFromGroupAsync(connectionId, grupo.Nome);
+                        }
                     }
                 }
             }
+        }
+
+        public async Task NotificarMudançaNaListaUsuarios()
+        {
+            var usuarios = _banco.Usuarios.ToList();
+            await Clients.All.SendAsync("ReceberListaUsuarios", usuarios);
         }
 
         public async Task ObterListaUsuarios()
@@ -178,7 +196,14 @@ namespace ZapWeb.Hubs
                 }
             }
 
-            await Clients.Caller.SendAsync("AbrirGrupo", nomeGrupo);
+            var mensagens = _banco.Mensagens.Where(a => a.NomeGrupo == nomeGrupo).OrderBy(a => a.DataCriacao).ToList();
+
+            for (int i = 0; i < mensagens.Count; i++)
+            {
+                mensagens[i].Usuario = JsonConvert.DeserializeObject<Usuario>(mensagens[i].UsuarioJson);
+            }
+
+            await Clients.Caller.SendAsync("AbrirGrupo", nomeGrupo, mensagens );
         }
 
         public async Task EnviarMensagem(Usuario usuario, string msg, string nomeGrupo)

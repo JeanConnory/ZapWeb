@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "jSq+Oof2WyzLc5sDoBTYjG5J5d7uk8oSxEhESD+9FkkVEEwBznhaA3MWUpVK4CnOC5VEvSTgcXO6jRlf7nBuIg==",
+  "dgSpecHash": "niSX/rVFdS7m3euZI+tWWH+9XJOkVpEZtsiSKKQhXDZEb36M/tSTVy9UZ0WfhxmBltongahYRiiWJrYnsS7g0A==",
   "success": true,
   "projectFilePath": "C:\\Projetos\\Estudos\\SignalR\\ZapWeb\\ZapWeb\\ZapWeb.csproj",
   "expectedPackageFiles": [
@@ -189,7 +189,7 @@
     "C:\\Users\\micha\\.nuget\\packages\\microsoft.visualstudio.web.codegeneration.utils\\2.2.4\\microsoft.visualstudio.web.codegeneration.utils.2.2.4.nupkg.sha512",
     "C:\\Users\\micha\\.nuget\\packages\\microsoft.visualstudio.web.codegenerators.mvc\\2.2.4\\microsoft.visualstudio.web.codegenerators.mvc.2.2.4.nupkg.sha512",
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder\\microsoft.win32.registry\\4.5.0\\microsoft.win32.registry.4.5.0.nupkg.sha512",
-    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder\\netstandard.library\\2.0.3\\netstandard.library.2.0.3.nupkg.sha512",
+    "C:\\Users\\micha\\.nuget\\packages\\netstandard.library\\2.0.3\\netstandard.library.2.0.3.nupkg.sha512",
     "C:\\Users\\micha\\.nuget\\packages\\newtonsoft.json\\11.0.2\\newtonsoft.json.11.0.2.nupkg.sha512",
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder\\newtonsoft.json.bson\\1.0.1\\newtonsoft.json.bson.1.0.1.nupkg.sha512",
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder\\nuget.frameworks\\4.7.0\\nuget.frameworks.4.7.0.nupkg.sha512",
