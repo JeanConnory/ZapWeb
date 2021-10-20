@@ -1,0 +1,3 @@
+C:\Projetos\Estudos\SignalR\ZapWeb\ZapApp\ZapApp.Android\obj\Debug\90\MonoAndroid,Version=v9.0.AssemblyAttributes.cs
+C:\Projetos\Estudos\SignalR\ZapWeb\ZapApp\ZapApp.Android\obj\Debug\90\build.props
+C:\Projetos\Estudos\SignalR\ZapWeb\ZapApp\ZapApp.Android\obj\Debug\90\adb.props

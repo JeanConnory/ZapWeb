@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "niSX/rVFdS7m3euZI+tWWH+9XJOkVpEZtsiSKKQhXDZEb36M/tSTVy9UZ0WfhxmBltongahYRiiWJrYnsS7g0A==",
+  "dgSpecHash": "C4DLDOPdsQcs0CKCUvwGJT1b9Oxs4KrpX3iR9bhkW8quKDW9LS4vo/epe4qWtQ+W6JfIoBpzdHR8twmzsPpr5Q==",
   "success": true,
-  "projectFilePath": "C:\\Projetos\\Estudos\\SignalR\\ZapWeb\\ZapWeb\\ZapWeb.csproj",
+  "projectFilePath": "C:\\Dev\\Estudos\\SignalR\\ZapWeb\\ZapWeb\\ZapWeb.csproj",
   "expectedPackageFiles": [
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder\\microsoft.aspnet.webapi.client\\5.2.6\\microsoft.aspnet.webapi.client.5.2.6.nupkg.sha512",
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder\\microsoft.aspnetcore\\2.2.0\\microsoft.aspnetcore.2.2.0.nupkg.sha512",
