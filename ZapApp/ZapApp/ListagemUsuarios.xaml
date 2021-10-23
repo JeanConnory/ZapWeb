@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             BackgroundColor="#32A060"
+             xmlns:viewModel="clr-namespace:ZapApp"
+             x:Class="ZapApp.ListagemUsuarios">
+    <ContentPage.BindingContext>
+        <viewModel:ListagemUsuarioViewModel />
+    </ContentPage.BindingContext>
+    <ContentPage.Content>
+        <ListView ItemsSource="{Binding Usuarios}" HasUnevenRows="True">
+            <ListView.Header>
+                <Label Text="ZapWeb" HorizontalOptions="Center" TextColor="White" FontSize="32" />
+            </ListView.Header>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <Grid Padding="10">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Image Grid.Column="0" Grid.Row="0">
+                                <Image.Source>
+                                    <OnPlatform x:TypeArguments="FileImageSource">
+                                        <OnPlatform.Platforms>
+                                            <On Platform="Android" Value="icon.png" />
+                                            <On Platform="iOS" Value="icon.png" />
+                                        </OnPlatform.Platforms>
+                                    </OnPlatform>
+                                </Image.Source>
+                            </Image>
+                            <StackLayout Grid.Column="1" Grid.Row="0">
+                                <Label Text="Jean (Online)" TextColor="White" />
+                                <Label Text="jean@mail.com" TextColor="#D8CFCF" />
+                            </StackLayout>
+                        </Grid>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </ContentPage.Content>
+</ContentPage>
