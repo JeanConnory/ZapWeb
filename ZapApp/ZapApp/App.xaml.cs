@@ -10,7 +10,7 @@ namespace ZapApp
         {
             InitializeComponent();
 
-            MainPage = new ListagemUsuarios();
+            MainPage = new NavigationPage(new ListagensMensagens());
         }
 
         protected override void OnStart()
