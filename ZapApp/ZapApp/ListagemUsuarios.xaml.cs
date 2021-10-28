@@ -14,6 +14,7 @@ namespace ZapApp
             InitializeComponent();
         }
     }
+
     public class ListagemUsuarioViewModel
     {
         public List<Usuario> Usuarios { get; set; }
