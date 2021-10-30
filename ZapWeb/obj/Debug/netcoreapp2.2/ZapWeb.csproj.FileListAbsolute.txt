@@ -70,3 +70,4 @@ C:\Dev\Estudos\SignalR\ZapWeb\ZapWeb\obj\Debug\netcoreapp2.2\ZapWeb.pdb
 C:\Dev\Estudos\SignalR\ZapWeb\ZapWeb\obj\Debug\netcoreapp2.2\ZapWeb.genruntimeconfig.cache
 C:\Dev\Estudos\SignalR\ZapWeb\ZapWeb\obj\Debug\netcoreapp2.2\ZapWeb.csproj.CopyComplete
 C:\Dev\Estudos\SignalR\ZapWeb\ZapWeb\obj\Debug\netcoreapp2.2\ZapWeb.csproj.AssemblyReference.cache
+C:\Dev\Estudos\SignalR\ZapWeb\ZapWeb\bin\Debug\netcoreapp2.2\Database\ZapWeb.db
