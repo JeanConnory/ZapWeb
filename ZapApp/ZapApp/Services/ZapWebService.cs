@@ -1,23 +1,45 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
 using System.Threading.Tasks;
+using ZapApp.Models;
 
 namespace ZapApp.Services
 {
     public class ZapWebService
     {
-        private static HubConnection _connection { get; set; }
+        private static HubConnection _connection;
 
         private static ZapWebService _instance;
 
         private ZapWebService()
         {
+            _connection.On<bool, Usuario, string>("ReceberLogin", (sucesso, usuario, msg) =>
+            {
+                if (sucesso)
+                {
+                    UsuarioManager.SetUsuarioLogado(usuario);
+                    Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
+                    {
+                        App.Current.MainPage = new ListagemUsuarios();
+                    });
+                }
+                else
+                {
+                    Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
+                    {
+                        var inicioPage = ((Inicio)App.Current.MainPage);
+                        var loginPage = ((Login)inicioPage.Children[0]);
+                        loginPage.SetMensagem(msg);
+                    });
+                }
+
+            });
         }
 
         public static ZapWebService GetInstance()
         {
             if(_connection == null)
             {
-                _connection = new HubConnectionBuilder().WithUrl("/ZapWebHub").Build();
+                _connection = new HubConnectionBuilder().WithUrl("https://zapwebapiteste.azurewebsites.net/ZapWebHub").Build();
             }
             if(_connection.State == HubConnectionState.Disconnected)
             {
@@ -35,6 +57,11 @@ namespace ZapApp.Services
             }
 
             return _instance;
+        }
+
+        public async Task Login(Usuario usuario)
+        {
+            await _connection.InvokeAsync("Login", usuario);
         }
     }
 }

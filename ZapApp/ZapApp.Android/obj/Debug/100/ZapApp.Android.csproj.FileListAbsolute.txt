@@ -1220,3 +1220,4 @@ C:\Dev\Estudos\SignalR\ZapWeb\ZapApp\ZapApp.Android\obj\Debug\100\android\assets
 C:\Dev\Estudos\SignalR\ZapWeb\ZapApp\ZapApp.Android\obj\Debug\100\android\assets\System.Threading.Channels.dll
 C:\Dev\Estudos\SignalR\ZapWeb\ZapApp\ZapApp.Android\obj\Debug\100\android\assets\System.Threading.Tasks.dll
 C:\Dev\Estudos\SignalR\ZapWeb\ZapApp\ZapApp.Android\obj\Debug\100\android\assets\System.Threading.Tasks.Extensions.dll
+C:\Dev\Estudos\SignalR\ZapWeb\ZapApp\ZapApp.Android\obj\Debug\100\ZapApp.Android.csproj.CopyComplete

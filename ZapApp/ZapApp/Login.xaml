@@ -17,13 +17,14 @@
                 </Image.Source>
             </Image>
             <Frame  BackgroundColor="#267848" Padding="15, 5" CornerRadius="30">
-                <componente:CleanEntry Placeholder="Nome" PlaceholderColor="White" TextColor="White" HorizontalOptions="Center" WidthRequest="250" />
+                <componente:CleanEntry x:Name="Email" Placeholder="E-mail" PlaceholderColor="White" TextColor="White" HorizontalOptions="Center" WidthRequest="250" />
             </Frame>
             <Frame  BackgroundColor="#267848" Padding="15, 5" CornerRadius="30">
-                <componente:CleanEntry Placeholder="E-mail" PlaceholderColor="White" TextColor="White" HorizontalOptions="Center" WidthRequest="250" />
+                <componente:CleanEntry x:Name="Senha" Placeholder="Senha" PlaceholderColor="White" TextColor="White" HorizontalOptions="Center" WidthRequest="250" />
             </Frame>
-            <Button Text="ACESSAR" TextColor="White" BackgroundColor="#267848" HorizontalOptions="Center" WidthRequest="200" CornerRadius="30" />
-            <Label Text="mensagens" HorizontalOptions="Center" TextColor="White" />
+            <Button x:Name="Acessar" Text="ACESSAR" TextColor="White" BackgroundColor="#267848" HorizontalOptions="Center" WidthRequest="200" CornerRadius="30" />
+            <Label x:Name="Mensagem" HorizontalOptions="Center" TextColor="Red" />
+            <ActivityIndicator x:Name="Processando" />
             <Label HorizontalOptions="Center" TextColor="White">
                 <Label.FormattedText>
                     <FormattedString>
