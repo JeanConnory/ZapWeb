@@ -1,8 +1,11 @@
 ﻿using System.Collections.Generic;
-
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using ZapApp.Models;
+using ZapApp.Services;
 
 namespace ZapApp
 {
@@ -12,26 +15,48 @@ namespace ZapApp
         public ListagemUsuarios()
         {
             InitializeComponent();
+
+            Sair.Clicked += async (sender, args) =>
+            {
+                UsuarioManager.DelUsuarioLogado();
+
+                await ZapWebService.GetInstance().Sair(UsuarioManager.GetUsuarioLogado());
+                UsuarioManager.DelUsuarioLogado();
+
+                App.Current.MainPage = new Inicio();
+            };
+
+            Task.Run(async() => { await ZapWebService.GetInstance().ObterListaUsuarios(); });
         }
     }
 
-    public class ListagemUsuarioViewModel
+    public class ListagemUsuarioViewModel : INotifyPropertyChanged
     {
-        public List<Usuario> Usuarios { get; set; }
+        private List<Usuario> _usuarios;
+
+        public List<Usuario> Usuarios
+        {
+            get
+            {
+                return _usuarios;
+            }
+            set
+            {
+                _usuarios = value;
+                NotifyPropertyChanged(nameof(Usuarios));
+            }
+        }
 
         public ListagemUsuarioViewModel()
         {
-            Usuarios = MockUsuarios();
+
         }
 
-        private List<Usuario> MockUsuarios()
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {
-            return new List<Usuario>()
-                {
-                    new Usuario { Nome = "Jean Michael", Email = "jean@mail.com", Senha = "123456", IsOnline = false },
-                    new Usuario { Nome = "Jessica Jamilly", Email = "jessica@mail.com", Senha = "654321", IsOnline = false },
-                    new Usuario { Nome = "Dunha McGregor", Email = "dunha@mail.com", Senha = "987654", IsOnline = false }
-                };
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

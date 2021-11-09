@@ -23,5 +23,11 @@ namespace ZapApp.Services
 
             return null;
         }
+
+        public static void DelUsuarioLogado()
+        {
+            App.Current.Properties.Remove("Logado");
+            App.Current.SavePropertiesAsync();
+        }
     }
 }
