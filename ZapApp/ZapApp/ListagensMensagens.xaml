@@ -5,14 +5,16 @@
              xmlns:componente="clr-namespace:ZapApp.Components"
              x:Class="ZapApp.ListagensMensagens"
              xmlns:viewModel="clr-namespace:ZapApp"
-             xmlns:dataTemplate="clr-namespace:ZapApp"
-             Title="Aline">
+             xmlns:converter="clr-namespace:ZapApp.Converters"
+             xmlns:dataTemplate="clr-namespace:ZapApp">
     <ContentPage.BindingContext>
         <viewModel:ListagensMensagensViewModel />
     </ContentPage.BindingContext>
 
     <ContentPage.Resources>
         <ResourceDictionary>
+            <converter:NomeConverter x:Key="nomeConverter" />
+            
             <DataTemplate x:Key="esquerdaTemplate">
                 <ViewCell>
                     <Grid BackgroundColor="#F0F0F0" Padding="7">
@@ -37,7 +39,7 @@
                                             </OnPlatform>
                                         </Image.Source>
                                     </Image>
-                                    <Label Text="{Binding Usuario.Nome}" TextColor="Black" />
+                                    <Label Text="{Binding Usuario.Nome, Converter={StaticResource nomeConverter}}" TextColor="Black" />
                                 </StackLayout>
                                 <Label Text="{Binding Texto}" TextColor="#8C8C8C" />
                             </StackLayout>
@@ -59,7 +61,7 @@
                         <Frame Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" HasShadow="True" CornerRadius="20">
                             <StackLayout>
                                 <StackLayout Orientation="Horizontal" HorizontalOptions="End">
-                                    <Label Text="{Binding Usuario.Nome}" TextColor="Black" />
+                                    <Label Text="{Binding Usuario.Nome, Converter={StaticResource nomeConverter}}" TextColor="Black" />
                                     <Image WidthRequest="25">
                                         <Image.Source>
                                             <OnPlatform x:TypeArguments="FileImageSource">
@@ -84,7 +86,7 @@
     </ContentPage.Resources>
     <ContentPage.Content>
         <StackLayout>
-            <ListView SeparatorVisibility="None" ItemsSource="{Binding Mesagens}" HasUnevenRows="True" ItemTemplate="{StaticResource mensagemDataTemplateSelector}" />
+            <ListView x:Name="Listagem" SeparatorVisibility="None" ItemsSource="{Binding Mensagens}" HasUnevenRows="True" ItemTemplate="{StaticResource mensagemDataTemplateSelector}" />
             <Grid VerticalOptions="End" Padding="10">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -94,9 +96,9 @@
                     <ColumnDefinition Width="15*" />
                 </Grid.ColumnDefinitions>
                 <Frame Grid.Row="0" Grid.Column="0" BackgroundColor="#32A060" Padding="15, 5" CornerRadius="30">
-                    <componente:CleanEntry Placeholder="Mensagem" PlaceholderColor="White" TextColor="White" HorizontalOptions="StartAndExpand" WidthRequest="250" />
+                    <componente:CleanEntry x:Name="Mensagem" Placeholder="Mensagem" PlaceholderColor="White" TextColor="White" HorizontalOptions="StartAndExpand" WidthRequest="250" />
                 </Frame>
-                <Button Grid.Row="0" Grid.Column="1" TextColor="White" BackgroundColor="#32A060" HorizontalOptions="Center" CornerRadius="30" WidthRequest="60">
+                <Button x:Name="Enviar" Grid.Row="0" Grid.Column="1" TextColor="White" BackgroundColor="#32A060" HorizontalOptions="Center" CornerRadius="30" WidthRequest="60">
                     <Button.ImageSource>
                         <OnPlatform x:TypeArguments="FileImageSource">
                             <OnPlatform.Platforms>

@@ -12,7 +12,7 @@
   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
   <application android:label="ZapApp.Android" android:theme="@style/MainTheme" android:icon="@drawable/icon" android:name="android.app.Application" android:allowBackup="true" android:debuggable="true" android:extractNativeLibs="true">
     <activity android:configChanges="orientation|smallestScreenSize|screenLayout|screenSize|uiMode" android:icon="@mipmap/icon" android:label="ZapApp" android:theme="@style/MainTheme" android:name="crc642c34908dadef24e6.MainActivity" />
-    <activity android:icon="@drawable/icon" android:label="ZapApp" android:noHistory="true" android:theme="@style/splashscreen" android:name="crc642c34908dadef24e6.SplashActivity">
+    <activity android:icon="@drawable/icon" android:label="ZapApp" android:noHistory="true" android:theme="@style/splashscreen" android:name="crc642c34908dadef24e6.SplashActivity" android:exported="true">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />

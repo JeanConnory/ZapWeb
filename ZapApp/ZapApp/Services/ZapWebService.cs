@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using Xamarin.Forms;
 using ZapApp.Models;
 
 namespace ZapApp.Services
@@ -11,6 +13,29 @@ namespace ZapApp.Services
         private static HubConnection _connection;
 
         private static ZapWebService _instance;
+        public static ZapWebService GetInstance()
+        {
+            if (_connection == null)
+            {
+                _connection = new HubConnectionBuilder().WithUrl("https://zapwebapiteste.azurewebsites.net/ZapWebHub").Build();
+            }
+            if (_connection.State == HubConnectionState.Disconnected)
+            {
+                _connection.StartAsync();
+            }
+            _connection.Closed += async (error) =>
+            {
+                await Task.Delay(5000);
+                await _connection.StartAsync();
+            };
+
+            if (_instance == null)
+            {
+                _instance = new ZapWebService();
+            }
+
+            return _instance;
+        }
 
         private ZapWebService()
         {
@@ -19,10 +44,10 @@ namespace ZapApp.Services
                 if (sucesso)
                 {
                     UsuarioManager.SetUsuarioLogado(usuario);
-                    Task.Run(async() => { await Entrar(usuario); });
+                    Task.Run(async () => { await Entrar(usuario); });
                     Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
                     {
-                        App.Current.MainPage = new ListagemUsuarios();
+                        App.Current.MainPage = new NavigationPage(new ListagemUsuarios());
                     });
                 }
                 else
@@ -34,26 +59,11 @@ namespace ZapApp.Services
                         loginPage.SetMensagem(msg);
                     });
                 }
-
-                _connection.On<List<Usuario>>("ReceberListaUsuarios", (usuarios) =>
-                {
-                    if(App.Current.MainPage.GetType() == typeof(ListagemUsuarios))
-                    {
-                        var usuarioLogado = usuarios.Find(u => u.Id == UsuarioManager.GetUsuarioLogado().Id);
-                        usuarios.Remove(usuarioLogado);
-
-                        Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
-                        {
-                            ((ListagemUsuarioViewModel)App.Current.MainPage.BindingContext).Usuarios = usuarios;
-                        });
-                    }
-                });
-
             });
 
             _connection.On<bool, Usuario, string>("ReceberCadastro", (sucesso, usuario, msg) =>
             {
-                if(sucesso)
+                if (sucesso)
                 {
                     Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
                     {
@@ -72,37 +82,63 @@ namespace ZapApp.Services
                     });
                 }
             });
+
+            _connection.On<List<Usuario>>("ReceberListaUsuarios", (usuarios) =>
+            {
+                if (App.Current.MainPage.GetType() == typeof(NavigationPage) && ((NavigationPage)App.Current.MainPage).CurrentPage.GetType() == typeof(ListagemUsuarios))
+                {
+                    var usuarioLogado = usuarios.Find(u => u.Id == UsuarioManager.GetUsuarioLogado().Id);
+                    usuarios.Remove(usuarioLogado);
+
+                    Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
+                    {
+                        var paginaAtual = ((NavigationPage)App.Current.MainPage).CurrentPage;
+                        ((ListagemUsuarioViewModel)paginaAtual.BindingContext).Usuarios = usuarios;
+                    });
+                }
+            });
+
+            _connection.On<string, List<Mensagem>>("AbrirGrupo", (nomeGrupo, mensagens) =>
+            {
+                if (App.Current.MainPage.GetType() == typeof(NavigationPage) && ((NavigationPage)App.Current.MainPage).CurrentPage.GetType() == typeof(ListagensMensagens))
+                {
+                    var navigationPage = ((NavigationPage)App.Current.MainPage);
+                    var listagemUsuarios = (ListagensMensagens)navigationPage.CurrentPage;
+                    listagemUsuarios.SetNomeGrupo(nomeGrupo);
+
+                    Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
+                    {
+                        var listagemViewModel = (ListagensMensagensViewModel)listagemUsuarios.BindingContext;
+                        listagemViewModel.Mensagens = new ObservableCollection<Mensagem>(mensagens);
+                        listagemUsuarios.SetScrollOnBottom();
+                    });
+                }
+            });
+
+            _connection.On<Mensagem, string>("ReceberMensagem", (mensagem, nomeGrupo) =>
+            {
+                if (App.Current.MainPage.GetType() == typeof(NavigationPage) && ((NavigationPage)App.Current.MainPage).CurrentPage.GetType() == typeof(ListagensMensagens))
+                {
+                    var navigationPage = ((NavigationPage)App.Current.MainPage);
+                    var listagemUsuarios = (ListagensMensagens)navigationPage.CurrentPage;
+
+                    if (nomeGrupo == listagemUsuarios.GetNomeGrupo())
+                    {
+                        ListagensMensagensViewModel viewModel = (ListagensMensagensViewModel)listagemUsuarios.BindingContext;
+
+                        Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
+                        {
+                            viewModel.Mensagens.Add(mensagem);
+                            listagemUsuarios.SetScrollOnBottom();
+                        });
+                    }
+                }
+            });
         }
-
-        public static ZapWebService GetInstance()
-        {
-            if(_connection == null)
-            {
-                _connection = new HubConnectionBuilder().WithUrl("https://zapwebapiteste.azurewebsites.net/ZapWebHub").Build();
-            }
-            if(_connection.State == HubConnectionState.Disconnected)
-            {
-                _connection.StartAsync();
-            }
-            _connection.Closed += async (error) =>
-            {
-                await Task.Delay(5000);
-                await _connection.StartAsync();
-            };
-
-            if (_instance == null)
-            {
-                _instance = new ZapWebService();
-            }
-
-            return _instance;
-        }
-
         public async Task Login(Usuario usuario)
         {
             await _connection.InvokeAsync("Login", usuario);
         }
-
         public async Task Cadastrar(Usuario usuario)
         {
             await _connection.InvokeAsync("Cadastrar", usuario);
@@ -121,6 +157,16 @@ namespace ZapApp.Services
         public async Task ObterListaUsuarios()
         {
             await _connection.InvokeAsync("ObterListaUsuarios");
+        }
+
+        public async Task CriarOuAbrirGrupo(string emailUm, string emailDois)
+        {
+            await _connection.InvokeAsync("CriarOuAbrirGrupo", emailUm, emailDois);
+        }
+
+        public async Task EnviarMensagem(Usuario usuario, string msg, string nomeGrupo)
+        {
+            await _connection.InvokeAsync("EnviarMensagem", usuario, msg, nomeGrupo);
         }
     }
 }

@@ -1,43 +1,104 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using ZapApp.Models;
+using ZapApp.Services;
 
 namespace ZapApp
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class ListagensMensagens : ContentPage
     {
+        private string _nomeGrupo { get; set; }
+
+        private Usuario _usuario { get; set; }
+
         public ListagensMensagens()
         {
             InitializeComponent();
+
+            Enviar.Clicked += async (sender, args) =>
+            {
+                var mensagem = Mensagem.Text.Trim();
+
+                if (mensagem.Length > 0)
+                {
+                    await ZapWebService.GetInstance().EnviarMensagem(UsuarioManager.GetUsuarioLogado(), mensagem, _nomeGrupo);
+                    Mensagem.Text = string.Empty;
+                }
+                else
+                {
+                    await DisplayAlert("Erro no preenchimento!", "Preencha o campo mensagem!", "OK");
+                }
+            };
+        }
+
+        public void SetUsuario(Usuario usuario)
+        {
+            _usuario = usuario;
+
+            Title = usuario.Nome.ToLower().FirstCharToUpper();
+
+            var emailUm = UsuarioManager.GetUsuarioLogado().Email;
+
+            var emailDois = usuario.Email;
+
+            Task.Run(async () => { await ZapWebService.GetInstance().CriarOuAbrirGrupo(emailUm, emailDois); });
+        }
+
+        public void SetScrollOnBottom()
+        {
+            var ultimoItemDaLista = Listagem.ItemsSource.Cast<object>().LastOrDefault();
+            Listagem.ScrollTo(ultimoItemDaLista, ScrollToPosition.MakeVisible, true);
+        }
+
+        public void SetNomeGrupo(string nomeGrupo)
+        {
+            _nomeGrupo = nomeGrupo;
+        }
+
+        public string GetNomeGrupo()
+        {
+            return _nomeGrupo;
         }
     }
 
-    public class ListagensMensagensViewModel
+    public class ListagensMensagensViewModel : INotifyPropertyChanged
     {
-        public List<Mensagem> Mesagens { get; set; }
+
+        private ObservableCollection<Mensagem> _mensagens;
+
+        public ObservableCollection<Mensagem> Mensagens
+        {
+            get
+            {
+                return _mensagens;
+            }
+            set
+            {
+                _mensagens = value;
+                NotifyPropertyChanged(nameof(Mensagens));
+            }
+        }
 
         public ListagensMensagensViewModel()
         {
-            Mesagens = MockMensagens();
+
         }
 
-        private List<Mensagem> MockMensagens()
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {
-            return new List<Mensagem>()
-                {
-                    new Mensagem { NomeGrupo = "1", Texto = "Olá mundo!1", Usuario = new Usuario { Id = 1, Nome = "Jean" } },
-                    new Mensagem { NomeGrupo = "1", Texto = "Olá mundo!2", Usuario = new Usuario { Id = 2, Nome = "Jessica" } },
-                    new Mensagem { NomeGrupo = "1", Texto = "Olá mundo!3", Usuario = new Usuario { Id = 1, Nome = "Jean" } },
-                    new Mensagem { NomeGrupo = "1", Texto = "Olá mundo!4", Usuario = new Usuario { Id = 2, Nome = "Jessica" } },
-                    new Mensagem { NomeGrupo = "1", Texto = "Olá mundo!5", Usuario = new Usuario { Id = 1, Nome = "Jean" } },
-                };
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 

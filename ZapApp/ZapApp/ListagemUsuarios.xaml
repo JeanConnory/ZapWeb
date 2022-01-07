@@ -4,6 +4,7 @@
              BackgroundColor="#32A060"
              xmlns:viewModel="clr-namespace:ZapApp"
              xmlns:converter="clr-namespace:ZapApp.Converters"
+             NavigationPage.HasNavigationBar="False"
              x:Class="ZapApp.ListagemUsuarios">
     <ContentPage.BindingContext>
         <viewModel:ListagemUsuarioViewModel />
@@ -15,7 +16,7 @@
         </ResourceDictionary>
     </ContentPage.Resources>
     <ContentPage.Content>
-        <ListView ItemsSource="{Binding Usuarios}" HasUnevenRows="True">
+        <ListView x:Name="Listagem" ItemsSource="{Binding Usuarios}" HasUnevenRows="True">
             <ListView.Header>
                 <StackLayout>
                     <Image Margin="0, 30">

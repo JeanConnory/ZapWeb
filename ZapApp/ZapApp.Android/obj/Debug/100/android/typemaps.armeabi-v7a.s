@@ -806,9 +806,9 @@ map_managed_to_java:
 	.long	.L.managed_type_name.388
 	.long	.L.java_type_name.385
 	.long	.L.managed_type_name.389
-	.long	.L.java_type_name.386
-	.long	.L.managed_type_name.390
 	.long	.L.java_type_name.387
+	.long	.L.managed_type_name.390
+	.long	.L.java_type_name.386
 	.long	.L.managed_type_name.391
 	.long	.L.java_type_name.388
 	.long	.L.managed_type_name.392
@@ -828,9 +828,9 @@ map_managed_to_java:
 	.long	.L.managed_type_name.399
 	.long	.L.java_type_name.396
 	.long	.L.managed_type_name.400
-	.long	.L.java_type_name.398
-	.long	.L.managed_type_name.401
 	.long	.L.java_type_name.397
+	.long	.L.managed_type_name.401
+	.long	.L.java_type_name.398
 	.long	.L.managed_type_name.402
 	.long	.L.java_type_name.399
 	.long	.L.managed_type_name.403
@@ -878,9 +878,9 @@ map_managed_to_java:
 	.long	.L.managed_type_name.424
 	.long	.L.java_type_name.420
 	.long	.L.managed_type_name.425
-	.long	.L.java_type_name.421
-	.long	.L.managed_type_name.426
 	.long	.L.java_type_name.422
+	.long	.L.managed_type_name.426
+	.long	.L.java_type_name.421
 	.long	.L.managed_type_name.427
 	.long	.L.java_type_name.424
 	.long	.L.managed_type_name.428

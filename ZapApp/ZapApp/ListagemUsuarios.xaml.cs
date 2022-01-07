@@ -26,6 +26,19 @@ namespace ZapApp
                 App.Current.MainPage = new Inicio();
             };
 
+            Listagem.ItemTapped += (sender, args) =>
+            {
+                Usuario usuario = (Usuario)args.Item;
+
+                var listagemMensagens = new ListagensMensagens();
+
+                listagemMensagens.SetUsuario(usuario);
+                
+                Navigation.PushAsync(new ListagensMensagens());
+
+
+            };
+
             Task.Run(async() => { await ZapWebService.GetInstance().ObterListaUsuarios(); });
         }
     }
