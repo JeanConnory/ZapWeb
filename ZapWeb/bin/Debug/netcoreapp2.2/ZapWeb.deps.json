@@ -33,6 +33,7 @@
           "Microsoft.AspNetCore.App": "2.2.0",
           "Microsoft.AspNetCore.Mvc": "2.2.0",
           "Microsoft.AspNetCore.Razor.Design": "2.2.0",
+          "Microsoft.AspNetCore.SignalR.Protocols.MessagePack": "1.1.5",
           "Microsoft.AspNetCore.StaticFiles": "2.2.0",
           "Microsoft.EntityFrameworkCore.Design": "2.2.0",
           "Microsoft.EntityFrameworkCore.SqlServer": "2.2.0",
@@ -48,6 +49,39 @@
         },
         "compile": {
           "ZapWeb.dll": {}
+        }
+      },
+      "MessagePack/1.7.3.7": {
+        "dependencies": {
+          "System.Reflection.Emit": "4.3.0",
+          "System.Reflection.Emit.Lightweight": "4.3.0",
+          "System.Runtime.Serialization.Primitives": "4.3.0",
+          "System.Threading.Tasks.Extensions": "4.5.1",
+          "System.ValueTuple": "4.3.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/MessagePack.dll": {
+            "assemblyVersion": "1.7.3.7",
+            "fileVersion": "1.7.3.7"
+          }
+        },
+        "compile": {
+          "lib/netstandard2.0/MessagePack.dll": {}
+        }
+      },
+      "Microsoft.AspNetCore.SignalR.Protocols.MessagePack/1.1.5": {
+        "dependencies": {
+          "MessagePack": "1.7.3.7",
+          "Microsoft.AspNetCore.SignalR.Common": "1.1.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.AspNetCore.SignalR.Protocols.MessagePack.dll": {
+            "assemblyVersion": "1.1.5.0",
+            "fileVersion": "1.1.5.19109"
+          }
+        },
+        "compile": {
+          "lib/netstandard2.0/Microsoft.AspNetCore.SignalR.Protocols.MessagePack.dll": {}
         }
       },
       "Microsoft.CodeAnalysis.CSharp.Workspaces/2.8.0": {
@@ -3729,6 +3763,20 @@
       "type": "project",
       "serviceable": false,
       "sha512": ""
+    },
+    "MessagePack/1.7.3.7": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-gyJ8m987yI1O7h4P2DS7YjOfOWqJ+WcvX/jST+vYxCt004FYRm6cHfCK20fa1ehpQhOwRIezVennku+pFWwtiw==",
+      "path": "messagepack/1.7.3.7",
+      "hashPath": "messagepack.1.7.3.7.nupkg.sha512"
+    },
+    "Microsoft.AspNetCore.SignalR.Protocols.MessagePack/1.1.5": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-GEfEzUT0b4doXLekKDmE+kUoDMhHfq5UbeANOPLiLGsiNfwb3QqQHENYLxyKsviNtJVFMJcCWdzf3EKvCVSP9Q==",
+      "path": "microsoft.aspnetcore.signalr.protocols.messagepack/1.1.5",
+      "hashPath": "microsoft.aspnetcore.signalr.protocols.messagepack.1.1.5.nupkg.sha512"
     },
     "Microsoft.CodeAnalysis.CSharp.Workspaces/2.8.0": {
       "type": "package",

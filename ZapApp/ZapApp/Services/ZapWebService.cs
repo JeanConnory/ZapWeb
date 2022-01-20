@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
-using System;
+using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
@@ -17,7 +17,10 @@ namespace ZapApp.Services
         {
             if (_connection == null)
             {
-                _connection = new HubConnectionBuilder().WithUrl("https://zapwebapiteste.azurewebsites.net/ZapWebHub").Build();
+                _connection = new HubConnectionBuilder()
+                                .WithUrl("https://zapwebapiteste.azurewebsites.net/ZapWebHub")
+                                .AddMessagePackProtocol()
+                                .Build();
             }
             if (_connection.State == HubConnectionState.Disconnected)
             {

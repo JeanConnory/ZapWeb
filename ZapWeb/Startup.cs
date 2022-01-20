@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,7 +43,11 @@ namespace ZapWeb
 
             services.AddSignalR(cfg =>
                 cfg.EnableDetailedErrors = true
-            ).AddMessagePackProtocol();
+            )
+                .AddMessagePackProtocol()
+                .AddJsonProtocol(cfg => {
+                    cfg.PayloadSerializerSettings.ContractResolver = new DefaultContractResolver();
+                });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
