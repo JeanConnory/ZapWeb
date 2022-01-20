@@ -36,13 +36,14 @@ namespace ZapWeb
 
             services.AddDbContext<BancoContext>(cfg =>
             {
-                cfg.UseSqlite("Data Source=Database\\ZapWeb.db");
-                //cfg.UseSqlite(@"Data Source=C:\dev\Estudos\SignalR\ZapWeb\ZapWeb\Database\ZapWeb.db");
+                //cfg.UseSqlite("Data Source=Database\\ZapWeb.db");
+                cfg.UseSqlite(@"Data Source=C:\dev\Estudos\SignalR\ZapWeb\ZapWeb\Database\ZapWeb.db");
             });
 
             services.AddSignalR(cfg =>
                 cfg.EnableDetailedErrors = true
-            );
+            ).AddMessagePackProtocol();
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 

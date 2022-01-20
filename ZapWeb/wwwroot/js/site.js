@@ -90,16 +90,7 @@ function HabilitarConversacao() {
         MonitorarListaUsuarios();
         EnviarReceberMensagem();
         AbrirGrupo();
-        OfflineDetect();
     }
-}
-
-function OfflineDetect() {
-    window.addEventListener("beforeunload", function (event) {
-        connection.invoke("DelConnectionIdDoUsuario", GetUsuarioLogado());
-        event.returnValue = "Tem certeza que deseja sair?";
-
-    });
 }
 
 function AbrirGrupo() {
@@ -113,10 +104,10 @@ function AbrirGrupo() {
 
         for (i = 0; i < mensagens.length; i++) {
             mensagemHTML += '<div class="message message-' + (mensagens[i].usuario.id == GetUsuarioLogado().id ? "right" : "left") + '"><div class="message-head"><img src="/imagem/chat.png" /> ' + mensagens[i].usuario.nome + '</div><div class="message-message">' + mensagens[i].texto + '</div></div>'
-        }         
+        }
         container.innerHTML += mensagemHTML;
-
         document.querySelector(".container-button").style.display = "flex";
+        MessageScrollBottom();
     });
 }
 
@@ -125,7 +116,9 @@ function EnviarReceberMensagem() {
     btnEnviar.addEventListener("click", function () {
         var mensagem = document.getElementById("mensagem").value;
         var usuario = GetUsuarioLogado();
-        connection.invoke("EnviarMensagem", usuario, mensagem, nomeGrupo);
+        connection.invoke("EnviarMensagem", usuario, mensagem, nomeGrupo).then(function () {
+            document.getElementById("mensagem").value = "";
+        });
     });
 
     connection.on("ReceberMensagem", function (mensagem, nomeDoGrupo) {
@@ -134,8 +127,14 @@ function EnviarReceberMensagem() {
         if (nomeGrupo == nomeDoGrupo) {
             var mensagemHTML = '<div class="message message-' + (mensagem.usuario.id == GetUsuarioLogado().id ? "right" : "left") + '"><div class="message-head"><img src="/imagem/chat.png" /> ' + mensagem.usuario.nome + '</div><div class="message-message">' + mensagem.texto + '</div></div>'
             container.innerHTML += mensagemHTML;
+            MessageScrollBottom();
         }
     });
+}
+
+function MessageScrollBottom() {
+    var container = document.querySelector(".container-messages");
+    container.scrollTo(0, container.scrollHeight);
 }
 
 function MonitorarListaUsuarios() {

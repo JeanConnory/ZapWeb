@@ -19,6 +19,16 @@ namespace ZapWeb.Hubs
             _banco = banco;
         }
 
+        public override async Task OnDisconnectedAsync(Exception exception)
+        {
+            var usuario = _banco.Usuarios.FirstOrDefault(a => a.ConnectionId.Contains(Context.ConnectionId));
+            if (usuario != null)
+            {
+                await DelConnectionIdDoUsuario(usuario);
+            }
+            await base.OnDisconnectedAsync(exception);
+        }
+
         public async Task Cadastrar(Usuario usuario)
         {
             bool IsExistUser = _banco.Usuarios.Where(a => a.Email == usuario.Email).Count() > 0;
@@ -50,7 +60,7 @@ namespace ZapWeb.Hubs
                 usuarioDb.IsOnline = true;
                 _banco.Usuarios.Update(usuarioDb);
                 _banco.SaveChanges();
-                await NotificarMudançaNaListaUsuarios();
+                await NotificarMudancaNaListaUsuarios();
             }
         }
 
@@ -62,7 +72,7 @@ namespace ZapWeb.Hubs
             _banco.Usuarios.Update(usuarioDb);
             _banco.SaveChanges();
             await DelConnectionIdDoUsuario(usuarioDb);
-            await NotificarMudançaNaListaUsuarios();
+            await NotificarMudancaNaListaUsuarios();
         }
 
         public async Task AddConnectionIdDoUsuario(Usuario usuario)
@@ -91,7 +101,7 @@ namespace ZapWeb.Hubs
             usuarioDB.ConnectionId = JsonConvert.SerializeObject(connectionsId);
             _banco.Usuarios.Update(usuarioDB);
             _banco.SaveChanges();
-            await NotificarMudançaNaListaUsuarios();
+            await NotificarMudancaNaListaUsuarios();
 
             //Adicionar as ConnectionsId dos grupos de conversa desse usuário no SignalR
             var grupos = _banco.Grupos.Where(a => a.Usuarios.Contains(usuarioDB.Email));
@@ -132,7 +142,7 @@ namespace ZapWeb.Hubs
 
                     _banco.Usuarios.Update(usuarioDB);
                     _banco.SaveChanges();
-                    await NotificarMudançaNaListaUsuarios();
+                    await NotificarMudancaNaListaUsuarios();
 
                     //Remoção das ConnectionsId dos grupos de conversa desse usuário no SignalR
                     var grupos = _banco.Grupos.Where(a => a.Usuarios.Contains(usuarioDB.Email));
@@ -148,7 +158,7 @@ namespace ZapWeb.Hubs
             }
         }
 
-        public async Task NotificarMudançaNaListaUsuarios()
+        public async Task NotificarMudancaNaListaUsuarios()
         {
             var usuarios = _banco.Usuarios.ToList();
             await Clients.All.SendAsync("ReceberListaUsuarios", usuarios);
@@ -203,14 +213,14 @@ namespace ZapWeb.Hubs
                 mensagens[i].Usuario = JsonConvert.DeserializeObject<Usuario>(mensagens[i].UsuarioJson);
             }
 
-            await Clients.Caller.SendAsync("AbrirGrupo", nomeGrupo, mensagens );
+            await Clients.Caller.SendAsync("AbrirGrupo", nomeGrupo, mensagens);
         }
 
         public async Task EnviarMensagem(Usuario usuario, string msg, string nomeGrupo)
         {
             Grupo grupo = _banco.Grupos.FirstOrDefault(a => a.Nome == nomeGrupo);
 
-            if(!grupo.Usuarios.Contains(usuario.Email))
+            if (!grupo.Usuarios.Contains(usuario.Email))
             {
                 throw new Exception("Usuário não pertence ao grupo!");
             }
